@@ -9,7 +9,7 @@ package MemoryAllocation;
  *
  * @author tootis
  */
-public class Process {
+public class Process extends Block {
     public int id;
     public int size;
 }

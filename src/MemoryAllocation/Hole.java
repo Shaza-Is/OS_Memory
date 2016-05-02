@@ -9,7 +9,7 @@ package MemoryAllocation;
  *
  * @author tootis
  */
-public class Hole {
+public class Hole extends Block {
     public int start;
     public int size;
 }
