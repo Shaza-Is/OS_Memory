@@ -83,24 +83,56 @@ public class MemoryManager extends JPanel {
         return newHole;
     }
     
+    
     public void deallocateProcess(Process p) {
         
     }
     
     public void addProcess(Process p, String algo) {
+        int i=0;
+        switch(algo)
+        {
+            case "First Fit":
+                i = firstFit(p);
+                break;
+            case "Best Fit":
+                i = bestFit(p);
+                break;
+            case"Worst Fit":
+                i = worstFit(p);
+                break;
+        }
         
+        p.start = holes.get(i).start;
+        p.start_px = (p.start * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
+        p.end_px = ((p.start + p.size) * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
+        
+        holes.get(i).start = p.start + p.size;
+        holes.get(i).size -= p.size;
+        
+        System.out.println("ADDING PROCESS");
+        System.out.println("START PIX: " + p.start_px);
+        System.out.println("END PIX: " + p.end_px);
+        System.out.println("HOLE START: " + holes.get(i).start);
+        System.out.println("HOLE END: " + (holes.get(i).start + holes.get(i).size));        
+        System.out.println();
+        
+            processes.add(p);
+            System.out.println("COUNT OF PROCESSES NOW: " + processes.size());
+            System.out.println("=====================");
+            repaint();
     } 
     
-    private void firstFit(Process p) {
-        
+    private int firstFit(Process p) {
+        return 0;
     }
     
-    private void bestFit(Process p) {
-        
+    private int bestFit(Process p) {
+        return 0;
     }
     
-    private void worstFit(Process p) {
-        
+    private int worstFit(Process p) {
+        return 0;
     }
     
     @Override
@@ -110,6 +142,12 @@ public class MemoryManager extends JPanel {
         g2d.setColor(Color.red);
         for(Hole h : holes) {
             Rectangle2D r = new Rectangle2D.Double(0, h.start_px, MEM_SHAPE_WIDTH, (h.end_px - h.start_px));
+            g2d.fill(r);
+        }
+        
+        g2d.setColor(Color.green);
+        for(Process p : processes) {
+            Rectangle2D r = new Rectangle2D.Double(0, p.start_px, MEM_SHAPE_WIDTH, (p.end_px - p.start_px));
             g2d.fill(r);
         }
     }

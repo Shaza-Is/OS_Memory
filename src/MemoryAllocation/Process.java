@@ -12,4 +12,5 @@ package MemoryAllocation;
 public class Process extends Block {
     public int id;
     public int size;
+    public int start;
 }

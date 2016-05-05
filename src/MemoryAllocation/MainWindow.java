@@ -254,7 +254,9 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        Process p = new Process();
+        p.size = (int) jSpinner3.getValue();
+        memoryManager1.addProcess(p,jComboBox1.getSelectedItem().toString());
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void modeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeActionPerformed
