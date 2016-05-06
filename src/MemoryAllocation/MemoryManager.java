@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.swing.JPanel;
 
 /*
@@ -124,7 +126,21 @@ public class MemoryManager extends JPanel {
     } 
     
     private int firstFit(Process p) {
-        return 0;
+        
+        Collections.sort(holes, new Comparator<Hole>() {
+                @Override
+                public int compare(Hole hole, Hole t1) {
+                    return Integer.compare(hole.start, t1.start);
+                }
+            });
+        for (int i=0;i<holes.size();i++)
+        {
+            if (p.size <= holes.get(i).size){
+            return i;
+            }
+                
+        }
+        return -1;
     }
     
     private int bestFit(Process p) {

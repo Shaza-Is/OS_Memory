@@ -12,4 +12,10 @@ package MemoryAllocation;
 public class Hole extends Block {
     public int start;
     public int size;
+    /*int getSize(){
+    return size;
+    }
+    int getStart(){
+    return start;
+    }*/
 }
