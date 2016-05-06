@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /*
@@ -34,6 +35,10 @@ public class MemoryManager extends JPanel {
     }
     
     public void addHole(Hole h) {
+        if(h.size == 0) {
+            return;
+        }
+        
         h.start_px = (h.start * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
         h.end_px = ((h.start + h.size) * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
         
@@ -91,7 +96,7 @@ public class MemoryManager extends JPanel {
     }
     
     public void addProcess(Process p, String algo) {
-        int i=0;
+        int i = -1;
         switch(algo)
         {
             case "First Fit":
@@ -105,26 +110,35 @@ public class MemoryManager extends JPanel {
                 break;
         }
         
+        if(i == -1) {
+            JOptionPane.showMessageDialog(null, "No suitable hole found");
+            return;
+        }
+        
         p.start = holes.get(i).start;
         p.start_px = (p.start * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
         p.end_px = ((p.start + p.size) * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
         
-        holes.get(i).start = p.start + p.size;
-        holes.get(i).size -= p.size;
+        Hole newHoleAfterProcess = new Hole();
+        newHoleAfterProcess.start = p.start + p.size;
+        newHoleAfterProcess.size = holes.get(i).size - p.size;
+        
+        holes.remove(i);
+        
+        addHole(newHoleAfterProcess);
         
         p.id = processes.size();
         
         System.out.println("ADDING PROCESS");
         System.out.println("START PIX: " + p.start_px);
-        System.out.println("END PIX: " + p.end_px);
-        System.out.println("HOLE START: " + holes.get(i).start);
-        System.out.println("HOLE END: " + (holes.get(i).start + holes.get(i).size));        
+        System.out.println("END PIX: " + p.end_px);        
         System.out.println();
         
-            processes.add(p);
-            System.out.println("COUNT OF PROCESSES NOW: " + processes.size());
-            System.out.println("=====================");
-            repaint();
+        processes.add(p);
+        System.out.println("COUNT OF PROCESSES NOW: " + processes.size());
+        System.out.println("COUNT OF HOLES NOW: " + holes.size());
+        System.out.println("=====================");
+        repaint();
     } 
     
     private int firstFit(Process p) {
@@ -167,7 +181,7 @@ public class MemoryManager extends JPanel {
                     return Integer.compare(hole.size, t1.size);
                 }
             });
-        if (p.size <= (holes.get(holes.size()-1).size)){
+        if (!holes.isEmpty() && p.size <= (holes.get(holes.size()-1).size)){
             return (holes.size()-1);             
         }
         return -1;
@@ -188,5 +202,11 @@ public class MemoryManager extends JPanel {
             Rectangle2D r = new Rectangle2D.Double(0, p.start_px, MEM_SHAPE_WIDTH, (p.end_px - p.start_px));
             g2d.fill(r);
         }
+    }
+
+    void startOver() {
+        holes.removeAll(holes);
+        processes.removeAll(processes);
+        repaint();
     }
 }

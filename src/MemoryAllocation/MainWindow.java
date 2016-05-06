@@ -1,5 +1,6 @@
 package MemoryAllocation;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -20,8 +21,15 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         initComponents();
         String header[] = new String[] { "ID", "Size"};
+        dtm = new DefaultTableModel(0, 0) {
+            @Override
+            public boolean isCellEditable(int i, int i1) {
+                return false;
+            }  
+        };
         dtm.setColumnIdentifiers(header);
         jTable1.setModel(dtm);
+        addProcessBtn.setEnabled(false);
     }
 
     /**
@@ -38,13 +46,13 @@ public class MainWindow extends javax.swing.JFrame {
         holeSizeMB = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        addHoleBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jSpinner3 = new javax.swing.JSpinner();
-        jButton2 = new javax.swing.JButton();
+        addProcessBtn = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
         memoryManager1 = new MemoryAllocation.MemoryManager();
@@ -70,10 +78,10 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel3.setText("Size");
 
-        jButton1.setText("Add hole");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addHoleBtn.setText("Add hole");
+        addHoleBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addHoleBtnActionPerformed(evt);
             }
         });
 
@@ -105,10 +113,10 @@ public class MainWindow extends javax.swing.JFrame {
 
         jSpinner3.setModel(new javax.swing.SpinnerNumberModel(1, 1, 1023, 1));
 
-        jButton2.setText("Add process");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        addProcessBtn.setText("Add process");
+        addProcessBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                addProcessBtnActionPerformed(evt);
             }
         });
 
@@ -164,7 +172,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                        .addComponent(addProcessBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,7 +200,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(holeStartMB)))
                         .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(addHoleBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
@@ -226,7 +234,7 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(holeSizeMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel3))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
+                        .addComponent(addHoleBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -240,7 +248,7 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(addProcessBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
@@ -258,27 +266,39 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void addProcessBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProcessBtnActionPerformed
         Process p = new Process();
         p.size = (int) jSpinner3.getValue();
         memoryManager1.addProcess(p,jComboBox1.getSelectedItem().toString());
         dtm.addRow(new Object[] {p.id, p.size});
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_addProcessBtnActionPerformed
 
     private void modeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeActionPerformed
         if(mode.getSelectedIndex() == 0) {
             System.out.println("Start Over");
-            // TODO
-            // Add message box conirming deletion
+            int dialogResult = JOptionPane.showConfirmDialog(null, 
+                            "You are about to start over, Are you sure?", 
+                            "Warning", 
+                            JOptionPane.YES_NO_OPTION);
+            
+            if(dialogResult == JOptionPane.YES_OPTION) {
+                memoryManager1.startOver();
+                dtm.setRowCount(0);
+                addHoleBtn.setEnabled(true);
+                addProcessBtn.setEnabled(false);
+            } 
+        } else {
+            addHoleBtn.setEnabled(false);
+            addProcessBtn.setEnabled(true);
         }
     }//GEN-LAST:event_modeActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void addHoleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHoleBtnActionPerformed
         Hole h = new Hole();
         h.start = (int) holeStartMB.getValue();
         h.size = (int) holeSizeMB.getValue();
         memoryManager1.addHole(h);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_addHoleBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -296,32 +316,29 @@ public class MainWindow extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new MainWindow().setVisible(true);
             }
         });
     }
     
-    private DefaultTableModel dtm = new DefaultTableModel(0, 0);
+    private DefaultTableModel dtm;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addHoleBtn;
+    private javax.swing.JButton addProcessBtn;
     private javax.swing.JSpinner holeSizeMB;
     private javax.swing.JSpinner holeStartMB;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
