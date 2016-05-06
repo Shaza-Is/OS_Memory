@@ -133,8 +133,7 @@ public class MemoryManager extends JPanel {
                     return Integer.compare(hole.start, t1.start);
                 }
             });
-        for (int i=0;i<holes.size();i++)
-        {
+        for (int i=0;i<holes.size();i++){
             if (p.size <= holes.get(i).size){
             return i;
             }
@@ -144,11 +143,32 @@ public class MemoryManager extends JPanel {
     }
     
     private int bestFit(Process p) {
-        return 0;
+        Collections.sort(holes, new Comparator<Hole>() {
+                @Override
+                public int compare(Hole hole, Hole t1) {
+                    return Integer.compare(hole.size, t1.size);
+                }
+            });
+        for (int i=0;i<holes.size();i++){
+            if (p.size <= holes.get(i).size){
+            return i;
+            }
+                
+        }
+        return -1;
     }
     
     private int worstFit(Process p) {
-        return 0;
+          Collections.sort(holes, new Comparator<Hole>() {
+                @Override
+                public int compare(Hole hole, Hole t1) {
+                    return Integer.compare(hole.size, t1.size);
+                }
+            });
+        if (p.size <= (holes.get(holes.size()-1).size)){
+            return (holes.size()-1);             
+        }
+        return -1;
     }
     
     @Override
