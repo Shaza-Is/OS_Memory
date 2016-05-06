@@ -39,6 +39,10 @@ public class MemoryManager extends JPanel {
             return;
         }
         
+        if (h.size + h.start > MEM_MAX_SIZE) {
+            h.size = (int) MEM_MAX_SIZE - h.start;
+        }
+        
         h.start_px = (h.start * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
         h.end_px = ((h.start + h.size) * MEM_SHAPE_HEIGHT) / MEM_MAX_SIZE;
         
