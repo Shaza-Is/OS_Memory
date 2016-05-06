@@ -91,11 +91,27 @@ public class MemoryManager extends JPanel {
     }
     
     
-    public void deallocateProcess(Process p) {
+    public void deallocateProcess(int pid) {
+        int index = 0;
+        for (Process p : processes) {
+            if(p.id == pid) break;
+            index++;
+        }
         
+        System.out.println("DEALLOCATING PROCESS!!");
+        System.out.println();
+        
+        Hole holeToReplace = new Hole();
+        holeToReplace.start = processes.get(index).start;
+        holeToReplace.size = processes.get(index).size;
+        
+        processes.remove(index);
+        addHole(holeToReplace);
+        
+        repaint();
     }
     
-    public void addProcess(Process p, String algo) {
+    public boolean addProcess(Process p, String algo) {
         int i = -1;
         switch(algo)
         {
@@ -112,7 +128,7 @@ public class MemoryManager extends JPanel {
         
         if(i == -1) {
             JOptionPane.showMessageDialog(null, "No suitable hole found");
-            return;
+            return false;
         }
         
         p.start = holes.get(i).start;
@@ -127,7 +143,7 @@ public class MemoryManager extends JPanel {
         
         addHole(newHoleAfterProcess);
         
-        p.id = processes.size();
+        p.assignId();
         
         System.out.println("ADDING PROCESS");
         System.out.println("START PIX: " + p.start_px);
@@ -139,6 +155,8 @@ public class MemoryManager extends JPanel {
         System.out.println("COUNT OF HOLES NOW: " + holes.size());
         System.out.println("=====================");
         repaint();
+        
+        return true;
     } 
     
     private int firstFit(Process p) {

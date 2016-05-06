@@ -1,6 +1,13 @@
 package MemoryAllocation;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -28,8 +35,24 @@ public class MainWindow extends javax.swing.JFrame {
             }  
         };
         dtm.setColumnIdentifiers(header);
-        jTable1.setModel(dtm);
+        processTable.setModel(dtm);
         addProcessBtn.setEnabled(false);
+        
+        int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+        InputMap inputMap = processTable.getInputMap(condition);
+        ActionMap actionMap = processTable.getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "Delete");
+        actionMap.put("Delete", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int indexToBeRemoved = processTable.getSelectedRow();
+                if(indexToBeRemoved >= 0) {
+                    memoryMan.deallocateProcess((int)processTable.getModel().getValueAt(indexToBeRemoved, 0));
+                    ((DefaultTableModel) processTable.getModel()).removeRow(indexToBeRemoved);
+                }
+            }
+        });
     }
 
     /**
@@ -48,15 +71,15 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         addHoleBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        processTable = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jSpinner3 = new javax.swing.JSpinner();
+        processSize = new javax.swing.JSpinner();
         addProcessBtn = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
-        memoryManager1 = new MemoryAllocation.MemoryManager();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        memoryMan = new MemoryAllocation.MemoryManager();
+        algo = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         mode = new javax.swing.JComboBox<>();
         jSeparator2 = new javax.swing.JSeparator();
@@ -85,7 +108,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        processTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -101,17 +124,17 @@ public class MainWindow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
+        jScrollPane1.setViewportView(processTable);
+        if (processTable.getColumnModel().getColumnCount() > 0) {
+            processTable.getColumnModel().getColumn(0).setResizable(false);
+            processTable.getColumnModel().getColumn(1).setResizable(false);
         }
 
         jLabel4.setText("Processes");
 
         jLabel5.setText("Size");
 
-        jSpinner3.setModel(new javax.swing.SpinnerNumberModel(1, 1, 1023, 1));
+        processSize.setModel(new javax.swing.SpinnerNumberModel(1, 1, 1023, 1));
 
         addProcessBtn.setText("Add process");
         addProcessBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -125,14 +148,14 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1.setToolTipText("Memory");
         jPanel1.setMinimumSize(new java.awt.Dimension(100, 120));
 
-        javax.swing.GroupLayout memoryManager1Layout = new javax.swing.GroupLayout(memoryManager1);
-        memoryManager1.setLayout(memoryManager1Layout);
-        memoryManager1Layout.setHorizontalGroup(
-            memoryManager1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout memoryManLayout = new javax.swing.GroupLayout(memoryMan);
+        memoryMan.setLayout(memoryManLayout);
+        memoryManLayout.setHorizontalGroup(
+            memoryManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 124, Short.MAX_VALUE)
         );
-        memoryManager1Layout.setVerticalGroup(
-            memoryManager1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        memoryManLayout.setVerticalGroup(
+            memoryManLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 500, Short.MAX_VALUE)
         );
 
@@ -140,14 +163,14 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(memoryManager1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(memoryMan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(memoryManager1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(memoryMan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "First Fit", "Best Fit", "Worst Fit" }));
+        algo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "First Fit", "Best Fit", "Worst Fit" }));
 
         jLabel6.setText("Algorithm");
 
@@ -183,8 +206,8 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(1, 1, 1)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jSpinner3)
-                            .addComponent(jComboBox1, 0, 215, Short.MAX_VALUE)))
+                            .addComponent(processSize)
+                            .addComponent(algo, 0, 215, Short.MAX_VALUE)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -242,10 +265,10 @@ public class MainWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(processSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(algo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addProcessBtn)
@@ -268,21 +291,26 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void addProcessBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProcessBtnActionPerformed
         Process p = new Process();
-        p.size = (int) jSpinner3.getValue();
-        memoryManager1.addProcess(p,jComboBox1.getSelectedItem().toString());
-        dtm.addRow(new Object[] {p.id, p.size});
+        p.size = (int) processSize.getValue();
+        boolean isAdded;
+        isAdded = memoryMan.addProcess(p, algo.getSelectedItem().toString());
+        if (isAdded) {
+            dtm.addRow(new Object[] {p.id, p.size});
+        }
     }//GEN-LAST:event_addProcessBtnActionPerformed
 
     private void modeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeActionPerformed
         if(mode.getSelectedIndex() == 0) {
             System.out.println("Start Over");
-            int dialogResult = JOptionPane.showConfirmDialog(null, 
-                            "You are about to start over, Are you sure?", 
-                            "Warning", 
-                            JOptionPane.YES_NO_OPTION);
+            int dialogResult;
+            dialogResult = JOptionPane.showConfirmDialog(null, 
+                    "You are about to start over, Are you sure?",
+                    "Warning",
+                    JOptionPane.YES_NO_OPTION);
             
             if(dialogResult == JOptionPane.YES_OPTION) {
-                memoryManager1.startOver();
+                memoryMan.startOver();
+                Process.resetIDGen();
                 dtm.setRowCount(0);
                 addHoleBtn.setEnabled(true);
                 addProcessBtn.setEnabled(false);
@@ -297,7 +325,7 @@ public class MainWindow extends javax.swing.JFrame {
         Hole h = new Hole();
         h.start = (int) holeStartMB.getValue();
         h.size = (int) holeSizeMB.getValue();
-        memoryManager1.addHole(h);
+        memoryMan.addHole(h);
     }//GEN-LAST:event_addHoleBtnActionPerformed
 
     /**
@@ -332,14 +360,14 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
     
-    private DefaultTableModel dtm;
+    private final DefaultTableModel dtm;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHoleBtn;
     private javax.swing.JButton addProcessBtn;
+    private javax.swing.JComboBox<String> algo;
     private javax.swing.JSpinner holeSizeMB;
     private javax.swing.JSpinner holeStartMB;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -353,9 +381,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSpinner jSpinner3;
-    private javax.swing.JTable jTable1;
-    private MemoryAllocation.MemoryManager memoryManager1;
+    private MemoryAllocation.MemoryManager memoryMan;
     private javax.swing.JComboBox<String> mode;
+    private javax.swing.JSpinner processSize;
+    private javax.swing.JTable processTable;
     // End of variables declaration//GEN-END:variables
 }
