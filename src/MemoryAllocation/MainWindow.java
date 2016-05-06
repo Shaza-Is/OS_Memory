@@ -1,5 +1,7 @@
 package MemoryAllocation;
 
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,6 +19,9 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public MainWindow() {
         initComponents();
+        String header[] = new String[] { "ID", "Size"};
+        dtm.setColumnIdentifiers(header);
+        jTable1.setModel(dtm);
     }
 
     /**
@@ -257,6 +262,7 @@ public class MainWindow extends javax.swing.JFrame {
         Process p = new Process();
         p.size = (int) jSpinner3.getValue();
         memoryManager1.addProcess(p,jComboBox1.getSelectedItem().toString());
+        dtm.addRow(new Object[] {p.id, p.size});
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void modeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeActionPerformed
@@ -308,6 +314,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
     }
+    
+    private DefaultTableModel dtm = new DefaultTableModel(0, 0);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner holeSizeMB;

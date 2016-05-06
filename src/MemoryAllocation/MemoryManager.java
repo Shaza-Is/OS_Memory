@@ -110,6 +110,8 @@ public class MemoryManager extends JPanel {
         holes.get(i).start = p.start + p.size;
         holes.get(i).size -= p.size;
         
+        p.id = processes.size();
+        
         System.out.println("ADDING PROCESS");
         System.out.println("START PIX: " + p.start_px);
         System.out.println("END PIX: " + p.end_px);
